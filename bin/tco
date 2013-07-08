@@ -1,3 +1,59 @@
 #!/usr/bin/env ruby
 
+require 'optparse'
 require 'tco'
+
+options = {}
+
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: tco [options] [TEXT]"
+
+  opts.on("-f COLOUR", "--foreground COLOUR", "Foreground colour") do |fg|
+    options[:fg] = fg
+  end
+
+  opts.on("-b COLOUR", "--background COLOUR", "Background colour") do |bg|
+    options[:bg] = bg
+  end
+
+  opts.on("-s", "--strong", "Use bold font") do |bold|
+    options[:bold] = bold
+  end
+
+  opts.on("-u", "--underline", "Underlined text") do |underline|
+    options[:underline] = underline
+  end
+
+  opts.on("-m", "--enable-matching",
+          "Enable the c/fg/bg/text/us and",
+          "p/preset/text/ syntax") do |matching|
+    options[:matching] = matching
+  end
+
+  opts.on("-p NAME", "--preset NAME", "Use the specified preset") do |preset|
+    options[:preset] = preset
+  end
+
+  opts.on("-o", "--output-file",
+          "Output to a file instead of stdout") do |file|
+    options[:file] = file
+  end
+
+  opts.on("-r", "--raw-output", "Print the output escaped") do |raw|
+    options[:raw] = raw
+  end
+
+  opts.on("-w", "--web", "Output HTML") do |html|
+    options[:html] = html
+  end
+end
+
+begin
+  parser.parse!
+rescue Exception => e
+  puts e
+  exit
+end
+
+Tco.load_config
+Tco.use_config
