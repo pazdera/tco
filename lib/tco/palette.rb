@@ -1,4 +1,10 @@
 module Tco
+  # The ANSI colours are configurable terminal emulators by users.
+  # The palette bellow contains the definitions for xterm, which
+  # can be quite different from the colours of your terminal.
+  #
+  # For best results, please, take the time to configure the proper
+  # set of colours via the tco configuration file.
   @ansi_palette = [
     {:code => 0, :colour => [0, 0, 0]},
     {:code => 1, :colour => [205, 0, 0]},
@@ -18,6 +24,8 @@ module Tco
     {:code => 15, :colour => [255, 255, 255]}
   ]
 
+  # This palette extends the original ansi one to 256 colours
+  # The colours should be the same for most modern terminals
   @extended_palette = @ansi_palette + [
     {:code => 16, :colour => [0, 0, 0]},
     {:code => 17, :colour => [0, 0, 95]},
