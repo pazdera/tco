@@ -1,83 +1,95 @@
+# tco - terminal colouring application and library
+# Copyright (C) 2013 Radek Pazdera
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 require "tco/version"
 require "tco/config"
+require "tco/colours"
+require "tco/style"
 
 module Tco
-  CLEAR = "\e[0m"
-  BOLD = "\e[1m"
-  UNDERLINE = "\e[4m"
+  @configuration = Configuration.new
+  @colours = Colours.new @configuration
 
-  def self.bold(string)
-    BOLD << string << CLEAR
+  def self.decorate(string, (fg, bg, bright, underline))
+    @colours.decorate string, [fg, bg, bright, underline]
+  end
+
+  def self.colour(string, fg=nil, bg=nil)
+    @colours.decorate(string, Style.new(fg, bg, false, false))
+  end
+
+  def self.bright(string)
+    @colours.decorate(string, Style.new(nil, nil, true, false))
   end
 
   def self.underline(string)
-    UNDERLINE << string << CLEAR
+    @colours.decorate(string, Style.new(nil, nil, false, true))
   end
 
-  def colour_to_fg_code_ansi(colour)
+  def self.style(string, style_name)
+    @colours.style string, style_name
   end
 
-  def colour_to_bg_code_ansi(colour)
+  def self.define_style(name, fg=nil, bg=nil, bright=false, underline=false)
+    @colours.define_style name, fg, bg, bright, underline
   end
 
-  def colour_to_fg_code_ext(colour)
+  def self.define_name(name, colour_def)
+    @colours.define_name name, colour_def
   end
 
-  def colour_to_bg_code_ext(colour)
+  def self.parse(string)
+    parts = []
+    open = []
+    state = :normal
 
-  def get_colour_code(colour, palette)
-    #
-    # - colour definitions:
-    #     "default"
-    #     "@2"
-    #     "#00ff00"
-    #     "alias"
-    #     0x00ff00
-    #
-    # - check the type
-    #   - int: RGB
-    #   - string:
-    #     - check the first char
-    #       - @ - get RGB from config
-    #       - # - RGB
-    #     - default
-    #     - search through aliases
-    #       - repeat
-    #
-    # - translate the colour definition to the coresponding
-    #   code in the palette
-    #     - search the palette using binary search
-    code = colour if colour.is_a? Integer
+    part = {:string => "", :fg => nil, :bg => nil,
+            :bright => false, :underline => false}
+    open << part
 
-    error = "Invalid colour definition, must be a string."
-    raise error unless colour.is_a? String
+    p = 0
+    buffer = ""
+    while p < string.length
+      c = string[p]
 
-    colour.strip!
-    case colour[0]
-    when '@'
-      colour[0] = ""
-      code = colour.to_i
-    when '#'
-      colour[0] = ""
+      case state
+      when :normal
+        case c
+        when "s"
+          state = :s
+          buffer += c
+        when "c"
+          state = :c
+          buffer += c
+        else
+          open.last[:string] += c
+        end
+      when :s
+        if c == "/"
+          state = :style
+          buffer += c
+        else
+          state = :normal
+          open.last[:string] += buffer
+          buffer = ""
+        end
+      when :c
+      end
+
+      p += 1
     end
-
-    return 82
-  end
-
-  def self.colourize_ansi(string, fg=:default, bg=:default)
-    fgcc = get_colour_code(fg, nil) + 30
-    bgcc = get_colour_code(bg, nil) + 40
-    "\e[#{fgcc}#{string}#{CLEAR}"
-  end
-
-  def self.colourize_extended(string, fg, bg)
-  end
-
-  def self.decorate_string(string, fg=:default, bg=:default,
-                           bold=False, underlined=False)
-  end
-
-  def self.use_config()
-    puts bold underline "Whaat?"
   end
 end
