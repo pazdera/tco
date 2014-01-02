@@ -1,9 +1,25 @@
 #!/usr/bin/env ruby
 
+# tco - terminal colouring application and library
+# Copyright (C) 2013 Radek Pazdera
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 require 'optparse'
 require 'tco'
 
-options = {}
+options = {:newline => true}
 
 parser = OptionParser.new do |opts|
   opts.banner = "Usage: tco [options] [TEXT]"
@@ -16,27 +32,28 @@ parser = OptionParser.new do |opts|
     options[:bg] = bg
   end
 
-  opts.on("-s", "--strong", "Use bold font") do |bold|
-    options[:bold] = bold
+  opts.on("-l", "--light", "Use bright/bold font") do |intense|
+    options[:bright] = intense
   end
 
   opts.on("-u", "--underline", "Underlined text") do |underline|
     options[:underline] = underline
   end
 
-  opts.on("-m", "--enable-matching",
+  opts.on("-s STYLE", "--style STYLE",
+          "Decorate with a preset style") do |style|
+    options[:style] = style
+  end
+
+  opts.on("-n", "--no-newline",
+          "Don't append \\n to the end of the string") do |newline|
+    options[:newline] = false
+  end
+
+  opts.on("-p", "--parse",
           "Enable the c/fg/bg/text/us and",
-          "p/preset/text/ syntax") do |matching|
-    options[:matching] = matching
-  end
-
-  opts.on("-p NAME", "--preset NAME", "Use the specified preset") do |preset|
-    options[:preset] = preset
-  end
-
-  opts.on("-o", "--output-file",
-          "Output to a file instead of stdout") do |file|
-    options[:file] = file
+          "s/style/text/ syntax") do |matching|
+    options[:parse] = matching
   end
 
   opts.on("-r", "--raw-output", "Print the output escaped") do |raw|
@@ -50,10 +67,42 @@ end
 
 begin
   parser.parse!
+
+  if options.has_key? :style
+    style = Tco::get_style name
+  else
+    style = Tco::Style.new
+  end
+
+  if options.has_key? :fg
+    style.fg = options[:fg]
+  end
+
+  if options.has_key? :bg
+    style.bg = options[:bg]
+  end
+
+  if options.has_key? :bright
+    style.bright = options[:bright]
+  end
+
+  if options.has_key? :underline
+    style.underline = options[:underline]
+  end
+
+  if ARGV.length > 0
+    input = ARGV[0].gsub /\\[nt]/, "\\n" => "\n", "\\t" => "\t"
+    print Tco::decorate input, style
+    print "\n" unless !options[:newline]
+  else
+    while input = gets
+      input.gsub! /\\[nt]/, "\\n" => "\n", "\\t" => "\t"
+      print Tco::decorate input.chomp, style
+      print "\n" if input =~ /\n$/
+    end
+  end
+
 rescue Exception => e
   puts e
   exit
 end
-
-Tco.load_config
-Tco.use_config
