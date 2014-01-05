@@ -19,8 +19,63 @@
 require 'optparse'
 require 'tco'
 
-options = {:newline => true}
+def display_palette
+  # TODO: Might be worth sorting, so the pallete is easier to navigate
+  colours = Tco::get_available_colours
+  colours_per_line = (`tput cols`.to_i / 9 - 0.5).ceil
 
+  c = 0
+  while c < colours.length do
+    if (c + colours_per_line) < colours.length
+      squares = colours_per_line
+    else
+      squares = colours.length - c
+    end
+
+    # Prepare the squares for the line
+    square_styles = []
+    squares.times do
+      black = Tco::Colour.new([0,0,0])
+      white = Tco::Colour.new([255,255,255])
+
+      font_colour = if (colours[c] - black).abs > (colours[c] - white).abs
+                      black
+                    else
+                      white
+                    end
+
+      style = Tco::Style.new font_colour, colours[c]
+      square_styles.push [c, style]
+      c += 1
+    end
+
+    # The first empty line
+    square_styles.each do |c, s|
+      print Tco::decorate " "*9, s
+    end
+    puts
+
+    # Colour index
+    square_styles.each do |c, s|
+      print Tco::decorate c.to_s.center(9), s
+    end
+    puts
+
+    # Colour value
+    square_styles.each do |c, s|
+      print Tco::decorate s.bg.to_s.center(9), s
+    end
+    puts
+
+    # Final empty line
+    square_styles.each do |c, s|
+      print Tco::decorate " "*9, s
+    end
+    puts
+  end
+end
+
+options = {:newline => true}
 parser = OptionParser.new do |opts|
   opts.banner = "Usage: tco [options] [TEXT]"
 
@@ -50,6 +105,16 @@ parser = OptionParser.new do |opts|
     options[:newline] = false
   end
 
+  opts.on("-d", "--display-palette",
+          "Show the current colour pallete") do |display|
+    options[:display] = true
+  end
+
+  opts.on("-P PALETTE", "--force-palette PALETTE",
+          "Show the current colour pallete") do |palette|
+    options[:palette] = palette
+  end
+
   opts.on("-p", "--parse",
           "Enable the c/fg/bg/text/us and",
           "s/style/text/ syntax") do |matching|
@@ -67,6 +132,14 @@ end
 
 begin
   parser.parse!
+
+  # Force palette setting
+  Tco::use_palette options[:palette] if options.has_key? :palette
+
+  if options.has_key? :display
+    display_palette
+    Kernel.exit! 0
+  end
 
   if options.has_key? :style
     style = Tco::get_style name
