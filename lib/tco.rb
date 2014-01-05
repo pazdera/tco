@@ -51,6 +51,14 @@ module Tco
     @colours.define_name name, colour_def
   end
 
+  def self.get_available_colours
+    @colours.get_available_colours
+  end
+
+  def self.use_palette(type)
+    @colours.set_palette(type)
+  end
+
   def self.parse(string)
     parts = []
     open = []

@@ -98,6 +98,14 @@ module Tco
       @names[name] = resolve_colour_def colour_def
     end
 
+    def get_available_colours
+      @palette.colours
+    end
+
+    def set_palette(type)
+      @palette.type = type
+    end
+
     private
     def colour_ansi(string, fg=nil, bg=nil)
       unless fg == nil
