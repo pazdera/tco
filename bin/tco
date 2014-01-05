@@ -44,33 +44,28 @@ def display_palette
                       white
                     end
 
-      style = Tco::Style.new font_colour, colours[c]
-      square_styles.push [c, style]
+      square_styles.push [c, font_colour, colours[c]]
       c += 1
     end
 
     # The first empty line
-    square_styles.each do |c, s|
-      print Tco::decorate " "*9, s
-    end
+    square_styles.each { |c, fg, bg| print Tco::colour " "*9, fg, bg }
     puts
 
     # Colour index
-    square_styles.each do |c, s|
-      print Tco::decorate c.to_s.center(9), s
+    square_styles.each do |c, fg, bg|
+      print Tco::colour c.to_s.center(9), fg, bg
     end
     puts
 
     # Colour value
-    square_styles.each do |c, s|
-      print Tco::decorate s.bg.to_s.center(9), s
+    square_styles.each do |c, fg, bg|
+      print Tco::colour bg.to_s.center(9), fg, bg
     end
     puts
 
     # Final empty line
-    square_styles.each do |c, s|
-      print Tco::decorate " "*9, s
-    end
+    square_styles.each { |c, fg, bg| print Tco::colour " "*9, fg, bg }
     puts
   end
 end
