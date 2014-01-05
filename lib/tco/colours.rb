@@ -52,6 +52,8 @@ module Tco
     # line). This is due to some problems I've been having with some
     # terminal emulators not handling multi-line coloured sequences well.
     def decorate(string, (fg, bg, bright, underline))
+      return string unless STDOUT.isatty
+
       fg = to_colour fg
       bg = to_colour bg
 
