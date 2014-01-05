@@ -47,6 +47,7 @@ module Tco
       @styles = {}
 
       @locations.each do |conf_file|
+        conf_file = File.expand_path conf_file
         next unless File.exists? conf_file
         load_config_file conf_file
       end
