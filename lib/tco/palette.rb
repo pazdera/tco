@@ -21,10 +21,46 @@ module Tco
     def initialize(rgb, lab=nil)
       @rgb = rgb
       @lab = lab ? lab : rgb_to_lab(rgb)
+      @hsl = nil
+      @yiq = nil
     end
 
     def -(other)
       delta_e_2000 @lab, other.lab
+    end
+
+    def <=>(other)
+      self.hsl[0] <=> other.hsl[0]
+    end
+
+    def to_s
+      values = @rgb.map do |v|
+        v = v.to_s 16
+
+        case v.length
+        when 0 then "00"
+        when 1 then "0" + v
+        when 2 then v
+        end
+      end
+
+      "#" + values.join("")
+    end
+
+    def hsl
+      if @hsl == nil
+        @hsl = rgb_to_hsl @rgb
+      else
+        @hsl
+      end
+    end
+
+    def yiq
+      if @yiq == nil
+        @yiq = rgb_to_yiq @rgb
+      else
+        @yiq
+      end
     end
 
     private
@@ -66,6 +102,51 @@ module Tco
 
     def rgb_to_lab(rgb_val)
       xyz_to_lab rgb_to_xyz rgb_val
+    end
+
+    def rgb_to_hsl(rgb_val)
+      r, g, b = rgb_val.map { |v| v / 255.0 }
+
+      min, max = [r, g, b].minmax
+      delta = max - min
+
+      lig = (max + min) / 2.0
+
+      if delta == 0
+         hue = 0
+         sat = 0
+      else
+         sat = if lig < 0.5
+                 delta / (0.0 + (max + min))
+               else
+                 delta / (2.0 - max - min)
+               end
+
+         delta_r = (((max - r) / 6.0 ) + (delta / 2.0)) / delta
+         delta_g = (((max - g) / 6.0 ) + (delta / 2.0)) / delta
+         delta_b = (((max - b) / 6.0 ) + (delta / 2.0)) / delta
+
+         hue = case max
+               when r then delta_b - delta_g
+               when g then (1.0/3) + delta_r - delta_b
+               when b then (2.0/3) + delta_g - delta_r
+               end
+
+         hue += 1 if hue < 0
+         hue -= 1 if hue > 1
+      end
+
+      [360 * hue, 100 * sat, 100 * lig]
+    end
+
+    def rgb_to_yiq(rgb_val)
+      r, g, b = rgb_val
+
+      y = 0.299*r + 0.587*g + 0.114*b
+      i = 0.569*r - 0.275*g - 0.321*b
+      q = 0.212*r - 0.523*g + 0.311*b
+
+      [y, i, q]
     end
 
     def rad_to_deg(v)
@@ -163,18 +244,7 @@ module Tco
     attr_reader :type
 
     def initialize(type)
-      @type = case type
-              when "auto"
-                if ENV.has_key? "TERM" and ENV["TERM"] == "xterm-256color"
-                  "extended"
-                else
-                  "ansi"
-                end
-              when "extended"
-                "extended"
-              else
-                raise "Unknown palette type '#{type}'."
-              end
+      set_type type
 
       # ANSI colours (the first 16) are configurable by users in most
       # terminals. The palette bellow contains the definitions for xterm,
@@ -462,12 +532,42 @@ module Tco
 
       colours = case @type
                 when "extended" then @palette
-                when "ansi" then @palette[0,16]
+                when "ansi" then @palette[0,8]
                 end
 
       # TODO: This is too simple ... optimize (add caching?)
       distances = colours.map { |c| c - colour }
       distances.each_with_index.min[1]
+    end
+
+    def colours
+      if @type == "extended"
+        @palette
+      else
+        @palette[0,8]
+      end
+    end
+
+    def type=(type)
+      set_type type
+    end
+
+    private
+    def set_type(type)
+      @type = case type
+              when "auto"[0, type.length]
+                if ENV.has_key? "TERM" and ENV["TERM"] == "xterm-256color"
+                  "extended"
+                else
+                  "ansi"
+                end
+              when "ansi"[0, type.length]
+                "ansi"
+              when "extended"[0, type.length]
+                "extended"
+              else
+                raise "Unknown palette type '#{type}'."
+              end
     end
   end
 end
