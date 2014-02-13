@@ -16,7 +16,6 @@
 
 require 'tco/palette'
 require 'tco/style'
-require 'pp'
 
 module Tco
   class Colours
@@ -96,6 +95,10 @@ module Tco
       @styles[name]
     end
 
+    def resolve(colour_def)
+      resolve_colour_def colour_def
+    end
+
     def define_name(name, colour_def)
       @names[name] = resolve_colour_def colour_def
     end
@@ -169,7 +172,7 @@ module Tco
 
       case rgb_value.length
       when 3
-        rgb_value.map { |c| c.to_i 16 }
+        rgb_value.scan(/./).map { |c| c.to_i 16 }
       when 6
         rgb_value.scan(/../).map { |c| c.to_i 16 }
       else
@@ -184,6 +187,7 @@ module Tco
     end
 
     def resolve_colour_def(colour_def)
+      return nil if colour_def == ""
       begin
         @palette.get_colour_value parse_colour_id colour_def
       rescue RuntimeError

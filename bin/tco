@@ -111,7 +111,7 @@ parser = OptionParser.new do |opts|
   end
 
   opts.on("-p", "--parse",
-          "Enable the c/fg/bg/text/us and",
+          "Enable the c/fg/bg/text/ub and",
           "s/style/text/ syntax") do |matching|
     options[:parse] = matching
   end
@@ -125,7 +125,7 @@ parser = OptionParser.new do |opts|
   end
 end
 
-begin
+#begin
   parser.parse!
 
   # Force palette setting
@@ -160,17 +160,22 @@ begin
 
   if ARGV.length > 0
     input = ARGV[0].gsub /\\[nt]/, "\\n" => "\n", "\\t" => "\t"
-    print Tco::decorate input, style
-    print "\n" unless !options[:newline]
   else
-    while input = gets
-      input.gsub! /\\[nt]/, "\\n" => "\n", "\\t" => "\t"
-      print Tco::decorate input.chomp, style
-      print "\n" if input =~ /\n$/
+    input = ""
+    while input_line = gets
+      input << input_line.gsub(/\\[nt]/, "\\n" => "\n", "\\t" => "\t")
     end
   end
 
-rescue Exception => e
-  puts e
-  exit
-end
+  if options.has_key? :parse
+    print Tco::parse input, style
+  else
+    print Tco::decorate input, style
+  end
+
+  print "\n" if options[:newline] && input =~ /\n$/
+
+#rescue Exception => e
+#  puts e
+#  exit
+#end

@@ -59,45 +59,8 @@ module Tco
     @colours.set_palette(type)
   end
 
-  def self.parse(string)
-    parts = []
-    open = []
-    state = :normal
-
-    part = {:string => "", :fg => nil, :bg => nil,
-            :bright => false, :underline => false}
-    open << part
-
-    p = 0
-    buffer = ""
-    while p < string.length
-      c = string[p]
-
-      case state
-      when :normal
-        case c
-        when "s"
-          state = :s
-          buffer += c
-        when "c"
-          state = :c
-          buffer += c
-        else
-          open.last[:string] += c
-        end
-      when :s
-        if c == "/"
-          state = :style
-          buffer += c
-        else
-          state = :normal
-          open.last[:string] += buffer
-          buffer = ""
-        end
-      when :c
-      end
-
-      p += 1
-    end
+  def self.parse(string, default_style)
+    p = Parser.new @colours, @default_style
+    p.parse
   end
 end
