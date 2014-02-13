@@ -1,0 +1,16 @@
+palette: "extended"
+
+colour_values:
+    "@0": "#3b3b3b"
+
+names:
+    red: "@1"
+    blue: "#0000FF"
+    name: "blue"
+
+styles:
+    name:
+        fg: "red"
+        bg: "green"
+        bright: "true"
+        underline: "false"
