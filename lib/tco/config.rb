@@ -17,13 +17,14 @@
 require 'yaml'
 
 module Tco
-  class Configuration
-    attr_reader :palette, :colour_values, :names, :styles
+  class Config
+    attr_accessor :options, :colour_values, :names, :styles
 
-    def initialize
-      @locations = ["/etc/tco.conf", "~/.tco.conf"]
-
-      @palette = "auto"
+    def initialize(locations=[])
+      @options = {
+        "palette" => "extended",
+        "output" => "term"
+      }
       @colour_values = {}
       @names = {
         "black" => "@0",
@@ -33,8 +34,8 @@ module Tco
         "blue" => "@4",
         "magenta" => "@5",
         "cyan" => "@6",
-        "light-gray" => "@7",
-        "dark-gray" => "@8",
+        "light-grey" => "@7",
+        "grey" => "@8",
         "light-red" => "@9",
         "light-green" => "@10",
         "light-yellow" => "@11",
@@ -46,28 +47,24 @@ module Tco
 
       @styles = {}
 
-      @locations.each do |conf_file|
+      locations.each do |conf_file|
         conf_file = File.expand_path conf_file
         next unless File.exists? conf_file
-        load_config_file conf_file
+        load conf_file
       end
     end
 
-    private
-    def name_exists?(colour_name)
-      @names.has_key? colour_name
-    end
-
-    def parse_bool(value)
-     return true if value =~ /true/i || value =~ /yes/i || value.to_i >= 1
-     return false
-    end
-
-    def load_config_file(path)
+    def load(path)
       conf_file = YAML::load_file path
 
-      if conf_file.has_key? "palette"
-          @palette = conf_file["palette"]
+      if conf_file.has_key? "options"
+        if conf_file["options"].is_a? Hash
+          conf_file["options"].each do |id, value|
+            @colour_values[id] = value
+          end
+        else
+          raise "The 'colour_values' config option must be a hash."
+        end
       end
 
       if conf_file.has_key? "colour_values"
@@ -118,6 +115,16 @@ module Tco
           raise "Invalid format of the 'styles' option."
         end
       end
+    end
+
+    private
+    def name_exists?(colour_name)
+      @names.has_key? colour_name
+    end
+
+    def parse_bool(value)
+     return true if value =~ /true/i || value =~ /yes/i || value.to_i >= 1
+     return false
     end
   end
 end

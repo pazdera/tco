@@ -19,57 +19,6 @@
 require 'optparse'
 require 'tco'
 
-def display_palette
-  # TODO: Might be worth sorting, so the pallete is easier to navigate
-  colours = Tco::get_available_colours
-  colours_per_line = (`tput cols`.to_i / 9 - 0.5).ceil
-
-  c = 0
-  while c < colours.length do
-    if (c + colours_per_line) < colours.length
-      squares = colours_per_line
-    else
-      squares = colours.length - c
-    end
-
-    # Prepare the squares for the line
-    square_styles = []
-    squares.times do
-      black = Tco::Colour.new([0,0,0])
-      white = Tco::Colour.new([255,255,255])
-
-      font_colour = if (colours[c] - black).abs > (colours[c] - white).abs
-                      black
-                    else
-                      white
-                    end
-
-      square_styles.push [c, font_colour, colours[c]]
-      c += 1
-    end
-
-    # The first empty line
-    square_styles.each { |c, fg, bg| print Tco::colour " "*9, fg, bg }
-    puts
-
-    # Colour index
-    square_styles.each do |c, fg, bg|
-      print Tco::colour c.to_s.center(9), fg, bg
-    end
-    puts
-
-    # Colour value
-    square_styles.each do |c, fg, bg|
-      print Tco::colour bg.to_s.center(9), fg, bg
-    end
-    puts
-
-    # Final empty line
-    square_styles.each { |c, fg, bg| print Tco::colour " "*9, fg, bg }
-    puts
-  end
-end
-
 options = {:newline => true}
 parser = OptionParser.new do |opts|
   opts.banner = "Usage: tco [options] [TEXT]"
@@ -82,8 +31,8 @@ parser = OptionParser.new do |opts|
     options[:bg] = bg
   end
 
-  opts.on("-l", "--light", "Use bright/bold font") do |intense|
-    options[:bright] = intense
+  opts.on("-B", "--bright", "Use bright/bold font") do |bright|
+    options[:bright] = bright
   end
 
   opts.on("-u", "--underline", "Underlined text") do |underline|
@@ -105,34 +54,40 @@ parser = OptionParser.new do |opts|
     options[:display] = true
   end
 
-  opts.on("-P PALETTE", "--force-palette PALETTE",
-          "Show the current colour pallete") do |palette|
+  opts.on("-p PALETTE", "--force-palette PALETTE",
+          "Force either ansi or extended palette") do |palette|
     options[:palette] = palette
   end
 
-  opts.on("-p", "--parse",
-          "Enable the c/fg/bg/text/ub and",
-          "s/style/text/ syntax") do |matching|
-    options[:parse] = matching
+  opts.on("-o", "--disable-parsing",
+          "Disable the {{fg:bg text}} and",
+          "{{style text}} formatting syntax") do |dp|
+    options[:disable_parsing] = true
   end
 
   opts.on("-r", "--raw-output", "Print the output escaped") do |raw|
-    options[:raw] = raw
+    options[:raw] = true
   end
 
-  opts.on("-w", "--web", "Output HTML") do |html|
-    options[:html] = html
-  end
+  # TODO: This should output HTML (not implemented yet)
+  #opts.on("-w", "--web", "Output HTML") do |html|
+  #  options[:html] = html
+  #end
 end
 
 #begin
   parser.parse!
 
+  config = Tco::config
+
   # Force palette setting
-  Tco::use_palette options[:palette] if options.has_key? :palette
+  config.options["palette"] = options[:palette] if options.has_key? :palette
+  config.options["output"] = :raw if options.has_key? :raw
+
+  Tco::reconfigure config
 
   if options.has_key? :display
-    display_palette
+    Tco::display_palette
     Kernel.exit! 0
   end
 
@@ -167,14 +122,13 @@ end
     end
   end
 
-  if options.has_key? :parse
-    print Tco::parse input, style
-  else
+  if options.has_key? :disable_parsing
     print Tco::decorate input, style
+  else
+    print Tco::parse input, style
   end
 
-  print "\n" if options[:newline] && input =~ /\n$/
-
+  print "\n" if options[:newline] && !(input =~ /\n$/)
 #rescue Exception => e
 #  puts e
 #  exit

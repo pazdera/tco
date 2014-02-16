@@ -29,6 +29,10 @@ module Tco
       [@fg, @bg, @bright, @underline]
     end
 
+    def to_h
+      {:fg => @fg, :bg => @bg, :bright => @bright, :underline => @underline}
+    end
+
     def to_ary
       to_a
     end

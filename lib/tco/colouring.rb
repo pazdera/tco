@@ -18,16 +18,15 @@ require 'tco/palette'
 require 'tco/style'
 
 module Tco
-  class Colours
-    CLEAR = "\e[0m"
-    BRIGHT = "\e[1m"
-    UNDERLINE = "\e[4m"
-
+  class Colouring
     ANSI_FG_BASE = 30
     ANSI_BG_BASE = 40
 
+    attr_reader :palette
+
     def initialize(configuration)
-      @palette = Palette.new configuration.palette
+      @palette = Palette.new configuration.options["palette"]
+      @output_type = configuration.options["output"]
 
       configuration.colour_values.each do |id, value|
         @palette.set_colour_value(parse_colour_id(id), parse_rgb_value(value))
@@ -51,7 +50,7 @@ module Tco
     # line). This is due to some problems I've been having with some
     # terminal emulators not handling multi-line coloured sequences well.
     def decorate(string, (fg, bg, bright, underline))
-      return string unless STDOUT.isatty
+      return string unless STDOUT.isatty || @output_type == :raw
 
       fg = to_colour fg
       bg = to_colour bg
@@ -67,27 +66,32 @@ module Tco
                  end
 
           if bright
-            line = BRIGHT + line
+            line = e(1) + line
           end
 
           if underline
-            line = UNDERLINE + line
+            line = e(4) + line
           end
 
           if (bright or underline) and fg == nil and bg == nil
-            line << CLEAR
+            line << e(0)
           end
         end
 
         output.push line
       end
 
+      output << "" if string =~ /\n$/
       output.join "\n"
     end
 
-    def define_style(name, fg=nil, bg=nil, bright=false, underline=false)
-      @styles[name] = Style.new(fg, bg, bright, underline)
-    end
+    #def define_style(name, fg=nil, bg=nil, bright=false, underline=false)
+    #  @styles[name] = Style.new(fg, bg, bright, underline)
+    #end
+
+    #def define_name(name, colour_def)
+    #  @names[name] = resolve_colour_def colour_def
+    #end
 
     def get_style(name)
       raise "Style '#{name}' not found." unless @styles.has_key? name
@@ -95,36 +99,33 @@ module Tco
       @styles[name]
     end
 
-    def resolve(colour_def)
-      resolve_colour_def colour_def
-    end
-
-    def define_name(name, colour_def)
-      @names[name] = resolve_colour_def colour_def
-    end
-
-    def get_available_colours
-      @palette.colours
-    end
-
-    def set_palette(type)
-      @palette.type = type
+    def set_output(output_type)
+      raise "Output '#{output_type}' not supported." unless [:term, :raw].include? output_type
+      @output_type = output_type
     end
 
     private
+    def e(seq)
+      if @output_type == :raw
+        "\\033[#{seq}m"
+      else
+        "\033[#{seq}m"
+      end
+    end
+
     def colour_ansi(string, fg=nil, bg=nil)
       unless fg == nil
         colour_id = @palette.match_colour(fg)
-        string = "\e[#{colour_id + 30}m" + string
+        string = e(colour_id + 30) + string
       end
 
       unless bg == nil
         colour_id = @palette.match_colour(bg)
-        string = "\e[#{colour_id + 40}m" + string
+        string = e(colour_id + 40) + string
       end
 
       unless fg == nil and bg == nil
-        string << CLEAR
+        string << e(0)
       end
 
       string
@@ -133,16 +134,16 @@ module Tco
     def colour_extended(string, fg=nil, bg=nil)
       unless fg == nil
         colour_id = @palette.match_colour(fg)
-        string = "\e[38;5;#{colour_id}m" + string
+        string = e("38;5;#{colour_id}") + string
       end
 
       unless bg == nil
         colour_id = @palette.match_colour(bg)
-        string = "\e[48;5;#{colour_id}m" + string
+        string = e("48;5;#{colour_id}") + string
       end
 
       unless fg == nil and bg == nil
-        string << CLEAR
+        string << e(0)
       end
 
       string
