@@ -29,7 +29,7 @@ module Tco
   end
 
   class Segment
-    attr_reader :value
+    attr_reader :value, :params
 
     def initialize(value, params)
       @value = value
@@ -39,21 +39,28 @@ module Tco
     def to_s
       @value
     end
+
+    # For rspec assertions
+    def ==(other)
+      @value == other.value and @params == other.params
+    end
   end
 
   class Parser
-    def initialize(default_params={})
+    def initialize(default_params={:fg => nil, :bg => nil, :style => nil})
       @default_params = default_params
     end
 
     def parse(string)
       lexer string
-      p @tokens
-      parse_tokens
+      parser
+      @segments
     end
 
     private
     def submit_token(type, value)
+      return if value == ""
+
       if type == :normal && @tokens.length > 0 && @tokens[-1].type == :normal
         prev = @tokens.pop
         @tokens.push Token.new :normal, prev.to_s + value
@@ -71,101 +78,106 @@ module Tco
         case state
         when :default
           case c
-          when "c"
-            state = :c
-
+          when "{"
             submit_token :normal, token
             token = c
-          when "s"
-            state = :s
 
+            state = :o_br
+          when "}"
             submit_token :normal, token
             token = c
-          when "/"
-            submit_token :normal, token
-            submit_token :end, c
-            token = ""
+
+            state = :c_br
           else
             token << c
           end
-        when :c
-          if c == "/"
-            state = :c_fg
-            token << c
-          else
-            state = :default
-            token << c
-            submit_token :normal, token
-            token = ""
-          end
-        when :s
-          if c == "/"
-            state = :s_def
-            token << c
-          else
-            state = :default
-            token << c
-            submit_token :normal, token
-            token = ""
-          end
-        when :c_fg
+        when :o_br
           case c
-          when "/"
-            state = :c_bg
-            token << c
+          when "{"
+            state = :definition
           else
-            token << c
-          end
-        when :c_bg
-          case c
-          when "/"
             state = :default
-            token << c
-            submit_token :colour, token
-            token = ""
-          else
-            token << c
           end
-        when :s_def
+          token << c
+        when :definition
           case c
-          when "/"
-            state = :default
+          when /[a-zA-Z0-9\:\-#]/
             token << c
-            submit_token :style, token
+          when /\s/
+            submit_token :definition, token
             token = ""
+
+            state = :default
           else
             token << c
+            state = :default
           end
+        when :c_br
+          token << c
+          if c == "}"
+            submit_token :end, token
+            token = ""
+          end
+          state = :default
         end
+      end
+      submit_token :normal, token unless token == ""
+    end
+
+    def add_segment(t, params)
+      return if t.to_s == ""
+
+      if @segments.length > 0 && @segments[-1].params == params
+        prev = @segments.pop
+        @segments.push Segment.new prev.to_s + t.to_s, params
+      else
+        @segments.push Segment.new t.to_s, params
       end
     end
 
-    def parse_tokens
-      segments = []
+    def parser
+      @segments = []
       params = @default_params
 
       stack = []
       @tokens.each do |t|
         case t.type
-        when :colour
+        when :definition
           prev_params = params
           stack.push params
 
-          clex = t.to_s.split "/"
-          params = {:fg => clex[1], :bg => clex[2],
-                    :style => prev_params[:style]}
-        when :style
-          stack.push params
-          clex = t.to_s.split "/"
-          params = {:style => clex[1]}
+          params = {
+            :fg => prev_params[:fg],
+            :bg => prev_params[:bg],
+            :bright => prev_params[:bright],
+            :underline => prev_params[:underline],
+            :style => prev_params[:style]
+          }
+
+          df = t.to_s[2..-1]
+          if df.include? ":"
+            c = df.split ":"
+            c.push "" if df[-1] == ":"
+
+            params[:fg] = c[0] unless c[0] == "" || c[0] == "-"
+            params[:bg] = c[1] unless c[1] == "" || c[1] == "-"
+            params[:bright] = true if c.length > 2 && c[2].include?("b")
+            params[:underline] = true if c.length > 2 && c[2].include?("u")
+          else
+            params[:fg] = nil
+            params[:bg] = nil
+            params[:style] = df
+          end
         when :end
-          params = stack.pop
+          if stack.length > 0
+            params = stack.pop
+          else
+            add_segment t, params
+          end
         else
-          seg = Segment.new t.to_s, params
-          segments << seg
+          add_segment t, params
         end
       end
-      segments
     end
   end
 end
