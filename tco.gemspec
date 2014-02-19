@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
                      allows its users to easily colourize the terminal
                      output of their bash scripts as well as Ruby programs.}
   s.homepage    = "http://linuxwell.com"
-  s.license     = "GPLv2"
+  s.license     = "MIT"
 
   s.rubyforge_project = "tco"
 
