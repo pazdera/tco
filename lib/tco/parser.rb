@@ -42,13 +42,26 @@ module Tco
 
     # For rspec assertions
     def ==(other)
-      @value == other.value and @params == other.params
+      @value == other.value && @params == other.params
     end
   end
 
   class Parser
-    def initialize(default_params={:fg => nil, :bg => nil, :style => nil})
-      @default_params = default_params
+    def initialize(default_style=nil)
+      @default_params = {
+        :base_style => nil,
+        :fg => nil,
+        :bg => nil,
+        :bright => false,
+        :underline => false
+      }
+
+      if default_style
+        @default_params[:fg] = default_style.fg
+        @default_params[:bg] = default_style.bg
+        @default_params[:bright] = default_style.bright
+        @default_params[:underline] = default_style.underline
+      end
     end
 
     def parse(string)
@@ -146,13 +159,7 @@ module Tco
           prev_params = params
           stack.push params
 
-          params = {
-            :fg => prev_params[:fg],
-            :bg => prev_params[:bg],
-            :bright => prev_params[:bright],
-            :underline => prev_params[:underline],
-            :style => prev_params[:style]
-          }
+          params = prev_params.clone
 
           df = t.to_s[2..-1]
           if df.include? ":"
@@ -164,9 +171,11 @@ module Tco
             params[:bright] = true if c.length > 2 && c[2].include?("b")
             params[:underline] = true if c.length > 2 && c[2].include?("u")
           else
+            params[:base_style] = df
             params[:fg] = nil
             params[:bg] = nil
-            params[:style] = df
+            params[:bright] = false
+            params[:underline] = false
           end
         when :end
           if stack.length > 0

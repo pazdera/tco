@@ -23,7 +23,7 @@ module Tco
     def initialize(locations=[])
       @options = {
         "palette" => "extended",
-        "output" => "term"
+        "output"  => "term"
       }
       @colour_values = {}
       @names = {

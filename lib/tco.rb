@@ -58,13 +58,13 @@ module Tco
   end
 
   def self.parse(string, default_style)
-    p = Parser.new default_style.to_h
+    p = Parser.new default_style
     segments = p.parse string
 
     output = ""
     segments.each do |seg|
-      style = if seg.params[:style]
-                @colouring.get_style seg.params[:style]
+      style = if seg.params[:base_style]
+                @colouring.get_style seg.params[:base_style]
               else
                 Style.new
               end

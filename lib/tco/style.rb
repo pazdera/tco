@@ -36,5 +36,9 @@ module Tco
     def to_ary
       to_a
     end
+
+    def ==(o)
+      @fg == o.fg && @bg == o.bg && @bright == o.bright && @underline == o.underline
+    end
   end
 end
