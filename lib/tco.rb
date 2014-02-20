@@ -31,37 +31,28 @@ module Tco
   @config = Config.new ["/etc/tco.conf", "~/.tco.conf"]
   @colouring = Colouring.new @config
 
-  def self.config
-    @config
+  def self.fg(colour, string=nil)
+    decorate string, Style.new(colour)
   end
 
-  def self.reconfigure(config)
-    @config = config
-    @colouring = Colouring.new @config
-  end
-
-  def self.decorate(string, (fg, bg, bright, underline))
-    @colouring.decorate string, [fg, bg, bright, underline]
-  end
-
-  def self.colour(string, fg=nil, bg=nil)
-    decorate(string, Style.new(fg, bg, false, false))
+  def self.bg(colour, string=nil)
+    decorate string, Style.new(nil, colour)
   end
 
   def self.bright(string)
-    decorate(string, Style.new(nil, nil, true, false))
+    decorate string, Style.new(nil, nil, true, false)
   end
 
   def self.underline(string)
-    decorate(string, Style.new(nil, nil, false, true))
+    decorate string, Style.new(nil, nil, false, true)
   end
 
-  def self.style(string, style_name)
-    @colouring.style string, style_name
+  def self.style(style_name, string)
+    @@colouring.style string, style_name
   end
 
   def self.get_style(style_name)
-    @colouring.get_style style_name
+    @@colouring.get_style style_name
   end
 
   def self.parse(string, default_style)
@@ -71,7 +62,7 @@ module Tco
     output = ""
     segments.each do |seg|
       style = if seg.params[:base_style]
-                @colouring.get_style seg.params[:base_style]
+                @@colouring.get_style seg.params[:base_style]
               else
                 Style.new
               end
@@ -86,9 +77,22 @@ module Tco
     output
   end
 
+  def self.decorate(string, (fg, bg, bright, underline))
+    @@colouring.decorate string, [fg, bg, bright, underline]
+  end
+
+  def self.config
+    @@config
+  end
+
+  def self.reconfigure(config)
+    @@config = config
+    @@colouring = Colouring.new @@config
+  end
+
   def self.display_palette
     # TODO: Might be worth sorting, so the pallete is easier to navigate
-    colours = @colouring.palette.colours
+    colours = @@colouring.palette.colours
     colours_per_line = (`tput cols`.to_i / 9 - 0.5).ceil
 
     c = 0
@@ -140,11 +144,11 @@ end
 
 class String
   def fg(colour)
-    Tco::colour self, colour
+    Tco::fg colour, self
   end
 
   def bg(colour)
-    Tco::colour self, nil, colour
+    Tco::bg colour, self
   end
 
   def bright
@@ -156,6 +160,6 @@ class String
   end
 
   def style(style)
-    Tco::style self, style
+    Tco::style style, self
   end
 end

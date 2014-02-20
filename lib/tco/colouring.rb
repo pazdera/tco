@@ -92,14 +92,6 @@ module Tco
       output.join "\n"
     end
 
-    #def define_style(name, fg=nil, bg=nil, bright=false, underline=false)
-    #  @styles[name] = Style.new(fg, bg, bright, underline)
-    #end
-
-    #def define_name(name, colour_def)
-    #  @names[name] = resolve_colour_def colour_def
-    #end
-
     def get_style(name)
       raise "Style '#{name}' not found." unless @styles.has_key? name
 
@@ -107,7 +99,9 @@ module Tco
     end
 
     def set_output(output_type)
-      raise "Output '#{output_type}' not supported." unless [:term, :raw].include? output_type
+      unless [:term, :raw].include? output_type
+        raise "Output '#{output_type}' not supported."
+      end
       @output_type = output_type
     end
 
