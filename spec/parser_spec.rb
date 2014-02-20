@@ -35,12 +35,6 @@ describe Tco do
       @p = Tco::Parser.new
     end
 
-    it "does basic parsing" do
-      str = "{{blue:blue abc}} {{-:b ee}} {{fg: {{:bg cc}}dd}} ff"
-
-      p @p.parse str
-    end
-
     it "handles no definitions" do
       string = "London"
       expected = [
