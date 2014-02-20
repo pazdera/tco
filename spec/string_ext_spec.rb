@@ -34,38 +34,66 @@ describe Tco do
     end
 
     describe "#fg" do
+      it "works with references" do
+        result = "London".fg "@17"
+        result.should eql "\e[38;5;17mLondon\e[0m"
+      end
+
       it "works with rgb" do
-        result = "London".fg "@"
+        result = "London".fg "#00005f"
+        result.should eql "\e[38;5;17mLondon\e[0m"
       end
 
       it "works with hex" do
+        result = "London".fg "0x00005f"
+        result.should eql "\e[38;5;17mLondon\e[0m"
       end
 
       it "works with names" do
+        result = "London".fg "black"
+        result.should eql "\e[38;5;0mLondon\e[0m"
       end
     end
 
     describe "#bg" do
+      it "works with references" do
+        result = "London".bg "@17"
+        result.should eql "\e[48;5;17mLondon\e[0m"
+      end
+
       it "works with rgb" do
+        result = "London".bg "#00005f"
+        result.should eql "\e[48;5;17mLondon\e[0m"
       end
 
       it "works with hex" do
+        result = "London".bg "0x00005f"
+        result.should eql "\e[48;5;17mLondon\e[0m"
       end
 
       it "works with names" do
+        result = "London".bg "black"
+        result.should eql "\e[48;5;0mLondon\e[0m"
       end
     end
 
-    it "" do
+    describe "#bright" do
+      it "makes the fond bold" do
+        result = "London".bright
+        result.should eql "\e[1mLondon\e[0m"
+      end
     end
 
-    it "" do
+    describe "#underline" do
+      it "underlines the text" do
+        result = "London".underline
+        result.should eql "\e[4mLondon\e[0m"
+      end
     end
 
-    it "" do
-    end
-
-    it "" do
+    it "can be combined" do
+      result = "London".bright.underline.fg("@17").bg("@17")
+      result.should eql "\e[48;5;17m\e[38;5;17m\e[4m\e[1mLondon\e[0m\e[0m\e[0m\e[0m"
     end
   end
 end
