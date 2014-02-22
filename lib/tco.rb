@@ -31,11 +31,15 @@ module Tco
   @config = Config.new ["/etc/tco.conf", "~/.tco.conf"]
   @colouring = Colouring.new @config
 
-  def self.fg(colour, string=nil)
+  def self.colour(fg, bg, string)
+    decorate string, Style.new(fg, bg)
+  end
+
+  def self.fg(colour, string)
     decorate string, Style.new(colour)
   end
 
-  def self.bg(colour, string=nil)
+  def self.bg(colour, string)
     decorate string, Style.new(nil, colour)
   end
 
@@ -48,11 +52,11 @@ module Tco
   end
 
   def self.style(style_name, string)
-    @@colouring.style string, style_name
+    @colouring.style string, style_name
   end
 
   def self.get_style(style_name)
-    @@colouring.get_style style_name
+    @colouring.get_style style_name
   end
 
   def self.parse(string, default_style)
@@ -62,7 +66,7 @@ module Tco
     output = ""
     segments.each do |seg|
       style = if seg.params[:base_style]
-                @@colouring.get_style seg.params[:base_style]
+                @colouring.get_style seg.params[:base_style]
               else
                 Style.new
               end
@@ -78,21 +82,21 @@ module Tco
   end
 
   def self.decorate(string, (fg, bg, bright, underline))
-    @@colouring.decorate string, [fg, bg, bright, underline]
+    @colouring.decorate string, [fg, bg, bright, underline]
   end
 
   def self.config
-    @@config
+    @config
   end
 
   def self.reconfigure(config)
-    @@config = config
-    @@colouring = Colouring.new @@config
+    @config = config
+    @colouring = Colouring.new config
   end
 
   def self.display_palette
     # TODO: Might be worth sorting, so the pallete is easier to navigate
-    colours = @@colouring.palette.colours
+    colours = @colouring.palette.colours
     colours_per_line = (`tput cols`.to_i / 9 - 0.5).ceil
 
     c = 0
@@ -120,23 +124,23 @@ module Tco
       end
 
       # The first empty line
-      square_styles.each { |c, fg, bg| print Tco::colour " "*9, fg, bg }
+      square_styles.each { |c, fg, bg| print Tco::colour fg, bg, " "*9 }
       puts
 
       # Colour index
       square_styles.each do |c, fg, bg|
-        print Tco::colour c.to_s.center(9), fg, bg
+        print Tco::colour fg, bg, c.to_s.center(9)
       end
       puts
 
       # Colour value
       square_styles.each do |c, fg, bg|
-        print Tco::colour bg.to_s.center(9), fg, bg
+        print Tco::colour fg, bg, bg.to_s.center(9)
       end
       puts
 
       # Final empty line
-      square_styles.each { |c, fg, bg| print Tco::colour " "*9, fg, bg }
+      square_styles.each { |c, fg, bg| print Tco::colour fg, bg, " "*9 }
       puts
     end
   end

@@ -172,6 +172,8 @@ module Tco
         raise error_msg
       end
 
+      raise error_msg unless rgb_value =~ /^[0-9a-fA-F]+$/
+
       case rgb_value.length
       when 3
         rgb_value.scan(/./).map { |c| c.to_i 16 }
