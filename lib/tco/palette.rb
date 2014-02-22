@@ -21,7 +21,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-
 module Tco
   class Colour
     attr_reader :rgb, :lab
@@ -253,6 +252,8 @@ module Tco
 
     def initialize(type)
       set_type type
+
+      @cache = {}
 
       # ANSI colours (the first 16) are configurable by users in most
       # terminals. The palette bellow contains the definitions for xterm,
@@ -543,9 +544,18 @@ module Tco
                 when "ansi" then @palette[0,8]
                 end
 
-      # TODO: This is too simple ... optimize (add caching?)
-      distances = colours.map { |c| c - colour }
-      distances.each_with_index.min[1]
+      if @cache.has_key? colour.to_s
+        @cache[colour.to_s]
+      else
+        distances = colours.map { |c| c - colour }
+        colour_index = distances.each_with_index.min[1]
+
+        # TODO: No cache eviction is currently in place
+        # It's not that much of a problem, because in many cases,
+        # applications don't use milions of different colours.
+        @cache[colour.to_s] = colour_index
+        colour_index
+      end
     end
 
     def colours
