@@ -46,8 +46,21 @@ end
 
 ### Draw Pictures in the Terminal
 
-And if you add `rmagick` gem to load images, you can easily display whole
+And if you add `rmagick` gem to load images, you can easily render whole
 pictures in your terminal.
+
+```ruby
+#!/usr/bin/env ruby
+
+require "tco"
+require "rmagick"
+
+Magick::Image.read("tux.png")[0].each_pixel do |pixel, col, row|
+  c = [pixel.red, pixel.green, pixel.blue].map { |v| 255*(v/65535.0) }
+  print "  ".bg c
+  puts if col >= 53
+end
+```
 
 [![Tux drawn with tco](http://linuxwell.com/assets/images/posts/tco-tux.png)](http://linuxwell.com/assets/images/posts/tco-tux.png)
 
@@ -80,7 +93,7 @@ Both of them are simple YAML text files. Pick the first one if you would like
 to apply your settings system-wide, go with the second option to set things up
 for yourself only (recommended).
 
-```
+```yaml
 palette: "extended"
 
 colour_values:
@@ -88,19 +101,6 @@ colour_values:
     "@1": "#cf6a4c"
     "@2": "#99ad6a"
     "@3": "#d8ad4c"
-    "@4": "#597bc5"
-    "@5": "#a037b0"
-    "@6": "#71b9f8"
-    "@7": "#adadad"
-
-    "@8": "#555555"
-    "@9": "#ff5555"
-    "@10": "#55ff55"
-    "@11": "#ffff55"
-    "@12": "#5555ff"
-    "@13": "#ff55ff"
-    "@14": "#55ffff"
-    "@15": "#ffffff"
 
 names:
     black: "#000"
@@ -120,12 +120,12 @@ You can use either the `tco` binary for your command line applications or the
 library directly from your Ruby scripts. Both use cases are explained bellow.
 
 ### The Ruby library
+
 - string interface
 - library interface
 - configuration
 
 ### The command-line tool
-
 
 
 ## Contributing
