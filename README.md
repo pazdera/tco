@@ -31,8 +31,6 @@ You have much more flexibility in Ruby, the following piece of code will
 draw a rainbow inside your terminal.
 
 ```ruby
-#!/usr/bin/env ruby
-
 require "tco"
 
 rainbow = ["#622e90", "#2d3091", "#00aaea", "#02a552", "#fdea22", "#eb443b", "#f37f5a"]
@@ -50,8 +48,6 @@ And if you add `rmagick` gem to load images, you can easily render whole
 pictures in your terminal.
 
 ```ruby
-#!/usr/bin/env ruby
-
 require "tco"
 require "rmagick"
 
@@ -155,9 +151,44 @@ library directly from your Ruby scripts. Both use cases are explained bellow.
 
 ### The Ruby library
 
-- string interface
-- library interface
-- configuration
+You have two options here, either use the default library interface or use
+the `String` extension that comes with the library.`
+
+```ruby
+require "tco"
+
+# The standard interface
+puts Tco::fg("#ff0000", Tco::bg("#888888", Tco::bright("London")))
+puts Tco::underline "Underground"
+
+# The String object extension
+puts "London".fg("#ff0000").bg("#888888").bright
+puts "Underground".underline
+
+# Using predefined style
+puts Tco::style "Underground"
+puts "London".style "alert"
+```
+
+You can also obtain and change the configuration of the library on the fly.
+This can be useful for adding aliases for colours and defining your own styles,
+so you don't have to repeat the same settings all over your script. All these
+settings will be applied on top of user configuration.
+
+```ruby
+
+tco_conf = Tco::config
+
+tco_conf["names"]["white"] = "#000"
+tco_conf["styles"]["pass"] = {
+  "fg" => "#000",
+  "bg" => "#00ff00",
+  "bright" => false,
+  "underline" => false,
+}
+
+Tco::reconfigure tco_conf
+```
 
 ### The command-line tool
 
