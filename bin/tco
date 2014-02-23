@@ -80,7 +80,7 @@ parser = OptionParser.new do |opts|
   #end
 end
 
-#begin
+begin
   parser.parse!
 
   config = Tco::config
@@ -134,7 +134,7 @@ end
   end
 
   print "\n" if options[:newline] && !(input =~ /\n$/)
-#rescue Exception => e
-#  puts e
-#  exit
-#end
+rescue Exception => e
+  puts e
+  exit
+end
