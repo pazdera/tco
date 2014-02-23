@@ -40,9 +40,9 @@ rainbow = ["#622e90", "#2d3091", "#00aaea", "#02a552", "#fdea22", "#eb443b", "#f
 end
 ```
 
-[![tco showing a simple rainbow](http://linuxwell.com/assets/images/posts/tco-rainbow.png)](http://linuxwell.com/assets/images/posts/tco-rainbow.png)
+[![tco showing a simple rainbow](http://linuxwell.com/assets/images/posts/tco-rainbow-2.png)](http://linuxwell.com/assets/images/posts/tco-rainbow-2.png)
 
-### Draw Pictures in the Terminal
+### Drawing Pictures in the Terminal
 
 And if you add `rmagick` gem to load images, you can easily render whole
 pictures in your terminal.
@@ -176,6 +176,7 @@ so you don't have to repeat the same settings all over your script. All these
 settings will be applied on top of user configuration.
 
 ```ruby
+require "tco"
 
 tco_conf = Tco::config
 
@@ -192,6 +193,23 @@ Tco::reconfigure tco_conf
 
 ### The command-line tool
 
+Using the `tco` command is just as simple as using the Ruby library. It expects
+input either as the last positional argument or alternatively at stdin.
+
+Apart from the core functionality, the CLI tool adds support for simple
+templates that let you markup certain parts of your string. All templates
+are enclosed in double curly brackets `{{fg:bg:ub text}}`. Check out the
+following examples:
+
+```bash
+tco -f "#c0ffee" -b "white" "Some input text"
+tco -b "grey" -B "Some input text"
+
+tco "{{alert ERROR:}} The {{::b download}} has failed."
+echo "{{#000:#ffffff black on white}} | tco"
+```
+
+For the full list of options, please refer to the help of the `tco` command.
 
 ## Contributing
 
