@@ -16,13 +16,21 @@ On top of that, it comes with a simple built-in templating engine that you can
 use to decorate only the parts that you want without having to split your
 string into 15 parts. Check out the following examples.
 
+### Terminal Output Colouring
+
 [![using tco to colour text](http://linuxwell.com/assets/images/posts/tco-terminal.png)](http://linuxwell.com/assets/images/posts/tco-terminal.png)
 
 You can use the `tco` terminal utility to add colours to anything in the
-terminal. You have much more flexibility in Ruby, the following piece of
-code will draw a rainbow inside your terminal:
+terminal. You can take advantage of the 256 colour palette supported by
+virtually all commonly used terminals, write in **bold** and
+<span style="text-decoration:underline">underline</span>.
 
-```
+### Colouring Ruby Output
+
+You have much more flexibility in Ruby, the following piece of code will
+draw a rainbow inside your terminal.
+
+```ruby
 #!/usr/bin/env ruby
 
 require "tco"
@@ -36,8 +44,10 @@ end
 
 [![tco showing a simple rainbow](http://linuxwell.com/assets/images/posts/tco-rainbow.png)](http://linuxwell.com/assets/images/posts/tco-rainbow.png)
 
-And if you add `rmagick` gem to load images, you can easily display pictures
-in your terminal.
+### Draw Pictures in the Terminal
+
+And if you add `rmagick` gem to load images, you can easily display whole
+pictures in your terminal.
 
 [![Tux drawn with tco](http://linuxwell.com/assets/images/posts/tco-tux.png)](http://linuxwell.com/assets/images/posts/tco-tux.png)
 
