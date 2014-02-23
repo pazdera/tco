@@ -83,17 +83,50 @@ Or install it yourself as:
 
 ## Configuration
 
-There are a few things you'll need to configure to make **tco** work correctly
-in your environment. There are two places, where you can do so:
+There are two places, where you can store your configuration:
 
-* `/etc/tco.conf` - system-wide configuration file
+* `/etc/tco.conf` - the system-wide configuration file
 * `~/.tco.conf` - user configuration file (takes precedence)
 
 Both of them are simple YAML text files. Pick the first one if you would like
 to apply your settings system-wide, go with the second option to set things up
 for yourself only (recommended).
 
+And now the important bit, in order to make **tco** work correctly in your
+environment, you will need to configure the **ANSI palette**. These 16 colours
+are configurable in most terminals (you probably have yours customised too).
+**tco** needs to know your setup, so it can make decisions which colour to use.
+You can do so like this:
+
 ```yaml
+# Don't forget changing the values to match your terminal configuration
+colour_values:
+    "@0": "#3b3b3b"
+    "@1": "#cf6a4c"
+    "@2": "#99ad6a"
+    "@3": "#d8ad4c"
+    "@4": "#597bc5"
+    "@5": "#a037b0"
+    "@6": "#71b9f8"
+    "@7": "#adadad"
+
+    "@8": "#555555"
+    "@9": "#ff5555"
+    "@10": "#55ff55"
+    "@11": "#ffff55"
+    "@12": "#5555ff"
+    "@13": "#ff55ff"
+    "@14": "#55ffff"
+    "@15": "#ffffff"
+```
+
+Apart from that you can also create **aliases** for colours and define
+short-cut styles for configurations you tend to use often. A typical
+configuration file would look like this:
+
+```yaml
+# This is unnecessary (extended palette is enabled by default).
+# However, you can set this to ansi if you use an older terminal.
 palette: "extended"
 
 colour_values:
@@ -101,6 +134,7 @@ colour_values:
     "@1": "#cf6a4c"
     "@2": "#99ad6a"
     "@3": "#d8ad4c"
+    # and so on ...
 
 names:
     black: "#000"
