@@ -14,15 +14,32 @@ option from the colours supported by your terminal.
 
 On top of that, it comes with a simple built-in templating engine that you can
 use to decorate only the parts that you want without having to split your
-string into 15 parts. Check out the following examples:
+string into 15 parts. Check out the following examples.
 
-[![tco example 1](http://linuxwell.com/assets/images/posts/tco-terminal.png)](http://linuxwell.com/assets/images/posts/tco-terminal.png)
+[![using tco to colour text](http://linuxwell.com/assets/images/posts/tco-terminal.png)](http://linuxwell.com/assets/images/posts/tco-terminal.png)
 
-[![tco example 2](http://linuxwell.com/assets/images/posts/tco-rainbow.png)](http://linuxwell.com/assets/images/posts/tco-rainbow.png)
+You can use the `tco` terminal utility to add colours to anything in the
+terminal. You have much more flexibility in Ruby, the following piece of
+code will draw a rainbow inside your terminal:
 
-[![tco example 3](http://linuxwell.com/assets/images/posts/tco-union-jack.png)](http://linuxwell.com/assets/images/posts/tco-union-jack.png)
+```
+#!/usr/bin/env ruby
 
-[![tco example 4](http://linuxwell.com/assets/images/posts/tco-tux.png)](http://linuxwell.com/assets/images/posts/tco-tux.png)
+require "tco"
+
+rainbow = ["#622e90", "#2d3091", "#00aaea", "#02a552", "#fdea22", "#eb443b", "#f37f5a"]
+10.times do
+  rainbow.each { |colour| print "    ".bg colour }
+  puts
+end
+```
+
+[![tco showing a simple rainbow](http://linuxwell.com/assets/images/posts/tco-rainbow.png)](http://linuxwell.com/assets/images/posts/tco-rainbow.png)
+
+And if you add `rmagick` gem to load images, you can easily display pictures
+in your terminal.
+
+[![Tux drawn with tco](http://linuxwell.com/assets/images/posts/tco-tux.png)](http://linuxwell.com/assets/images/posts/tco-tux.png)
 
 For more information on usage, please refer to the **Usage** section of this
 file bellow.
