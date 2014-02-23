@@ -16,9 +16,13 @@ On top of that, it comes with a simple built-in templating engine that you can
 use to decorate only the parts that you want without having to split your
 string into 15 parts. Check out the following examples:
 
-```
-$ echo "{{black:red ERROR}}  Something went terribly wrong" | tco
-```
+[![tco example 1](http://linuxwell.com/assets/images/posts/tco-terminal.png)](http://linuxwell.com/assets/images/posts/tco-terminal.png)
+
+[![tco example 2](http://linuxwell.com/assets/images/posts/tco-rainbow.png)](http://linuxwell.com/assets/images/posts/tco-rainbow.png)
+
+[![tco example 3](http://linuxwell.com/assets/images/posts/tco-union-jack.png)](http://linuxwell.com/assets/images/posts/tco-union-jack.png)
+
+[![tco example 4](http://linuxwell.com/assets/images/posts/tco-tux.png)](http://linuxwell.com/assets/images/posts/tco-tux.png)
 
 For more information on usage, please refer to the **Usage** section of this
 file bellow.
