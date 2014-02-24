@@ -151,8 +151,10 @@ library directly from your Ruby scripts. Both use cases are explained bellow.
 
 ### The Ruby library
 
-You have two options here, either use the default library interface or use
-the `String` extension that comes with the library.`
+When it comes to colouring, you have two options here. Either use the default
+library interface or use the `String` extension that comes with the library.
+Both of them offer the same functionality (`fg`, `bg`, `bright`, `underline`).
+See the example of both, below.
 
 ```ruby
 require "tco"
@@ -169,6 +171,10 @@ puts "Underground".underline
 puts Tco::style "Underground"
 puts "London".style "alert"
 ```
+
+The library then contains a few more advanced things (see `lib/tco/tco.rb`).
+
+#### Reconfiguring on the fly
 
 You can also obtain and change the configuration of the library on the fly.
 This can be useful for adding aliases for colours and defining your own styles,
@@ -194,7 +200,7 @@ Tco::reconfigure tco_conf
 ### The command-line tool
 
 Using the `tco` command is just as simple as using the Ruby library. It expects
-input either as the last positional argument or alternatively at stdin.
+input either as a positional argument or alternatively at stdin.
 
 Apart from the core functionality, the CLI tool adds support for simple
 templates that let you markup certain parts of your string. All templates
@@ -206,10 +212,22 @@ tco -f "#c0ffee" -b "white" "Some input text"
 tco -b "grey" -B "Some input text"
 
 tco "{{alert ERROR:}} The {{::b download}} has failed."
-echo "{{#000:#ffffff black on white}} | tco"
+echo "{{#000:#ffffff black on white}}" | tco
 ```
 
 For the full list of options, please refer to the help of the `tco` command.
+
+### Specifying colours
+
+With both the Ruby library and the command line tool, there is a number of
+ways how to specify the colour you would like:
+
+* **RGB** - you can do either `#c0ffee` or `0xc0ffee`
+* **name** - e.g., `black` or `white`, you can assign names to colours in your
+  configuration file
+* **index** - you can also refer to colours through an index to the palette,
+  e.g., `@0` or `@176`.
+
 
 ## Contributing
 
