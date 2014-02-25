@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.description = %q{tco is a commandline tool and also a Ruby module that
                      allows its users to easily colourize the terminal
                      output of their bash scripts as well as Ruby programs.}
-  s.homepage    = "http://linuxwell.com"
+  s.homepage    = "https://github.com/pazdera/tco"
   s.license     = "MIT"
 
   s.rubyforge_project = "tco"
