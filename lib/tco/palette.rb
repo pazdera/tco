@@ -42,7 +42,7 @@ module Tco
 
     def to_s
       values = @rgb.map do |v|
-        v = v.to_s 16
+        v = v.to_i.to_s 16
 
         case v.length
         when 0 then "00"
