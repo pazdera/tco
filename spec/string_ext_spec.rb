@@ -95,5 +95,12 @@ describe Tco do
       result = "London".bright.underline.fg("@17").bg("@17")
       result.should eql "\e[48;5;17m\e[38;5;17m\e[4m\e[1mLondon\e[0m\e[0m\e[0m\e[0m"
     end
+
+    describe "#decorate" do
+      it "processes templates" do
+        result = " {{::u London}} ".decorate
+        result.should eql " \e[4mLondon\e[0m "
+      end
+    end
   end
 end

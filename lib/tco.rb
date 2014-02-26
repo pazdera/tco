@@ -52,7 +52,7 @@ module Tco
   end
 
   def self.style(style_name, string)
-    @colouring.style string, style_name
+    @colouring.decorate(string, @colouring.get_style(style_name))
   end
 
   def self.get_style(style_name)
@@ -147,6 +147,10 @@ module Tco
 end
 
 class String
+  def decorate
+    Tco::parse self, Tco::Style.new
+  end
+
   def fg(colour)
     Tco::fg colour, self
   end
