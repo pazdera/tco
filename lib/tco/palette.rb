@@ -254,31 +254,31 @@ module Tco
       set_type type
 
       @cache = {}
-
-      # ANSI colours (the first 16) are configurable by users in most
-      # terminals. The palette bellow contains the definitions for xterm,
-      # which can be quite different from the colours of your terminal.
-      #
-      # For best results, please, take the time to configure the proper
-      # set of colours via the tco configuration file.
       @palette = [
-        Colour.new([0, 0, 0]),
-        Colour.new([205, 0, 0]),
-        Colour.new([0, 205, 0]),
-        Colour.new([205, 205, 0]),
-        Colour.new([0, 0, 238]),
-        Colour.new([205, 0, 205]),
-        Colour.new([0, 205, 205]),
-        Colour.new([229, 229, 229]),
-        Colour.new([127, 127, 127]),
-        Colour.new([255, 0, 0]),
-        Colour.new([0, 255, 0]),
-        Colour.new([255, 255, 0]),
-        Colour.new([92, 92, 255]),
-        Colour.new([255, 0, 255]),
-        Colour.new([0, 255, 255]),
-        Colour.new([255, 255, 255]),
+        # ANSI colours (the first 16) are configurable by users in most
+        # terminals. Therefore, they're not used for colour matching, unless
+        # they were explicitly configured in tco.conf.
+        #
+        # The colour values in comments are the defaults for xterm.
+        nil, # [0, 0, 0]
+        nil, # [205, 0, 0]
+        nil, # [0, 205, 0]
+        nil, # [205, 205, 0]
+        nil, # [0, 0, 238]
+        nil, # [205, 0, 205]
+        nil, # [0, 205, 205]
+        nil, # [229, 229, 229]
+        nil, # [127, 127, 127]
+        nil, # [255, 0, 0]
+        nil, # [0, 255, 0]
+        nil, # [255, 255, 0]
+        nil, # [92, 92, 255]
+        nil, # [255, 0, 255]
+        nil, # [0, 255, 255]
+        nil, # [255, 255, 255]
 
+        # The colours bellow are the definitions from xterm extended
+        # colour palette. They should be the same across terminals.
         Colour.new([0, 0, 0]),
         Colour.new([0, 0, 95]),
         Colour.new([0, 0, 135]),
@@ -529,7 +529,7 @@ module Tco
 
     def get_colour_value(id)
       raise "Id '#{id}' out of range." unless id.between?(0, @palette.length-1)
-      @palette[id].rgb
+      @palette[id].rgb if @palette[id]
     end
 
     # Returns an index of the closest colour in the palette
@@ -547,7 +547,7 @@ module Tco
       if @cache.has_key? colour.to_s
         @cache[colour.to_s]
       else
-        distances = colours.map { |c| c - colour }
+        distances = colours.map { |c| c ? c - colour : Float::INFINITY }
         colour_index = distances.each_with_index.min[1]
 
         # TODO: No cache eviction is currently in place
