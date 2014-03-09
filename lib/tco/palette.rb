@@ -551,8 +551,7 @@ module Tco
         colour_index = distances.each_with_index.min[1]
 
         # TODO: No cache eviction is currently in place
-        # It's not that much of a problem, because in many cases,
-        # applications don't use milions of different colours.
+        # We assume that applications won't use milions of different colours.
         @cache[colour.to_s] = colour_index
         colour_index
       end
