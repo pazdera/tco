@@ -191,7 +191,7 @@ module Tco
     end
 
     def resolve_colour_def(colour_def)
-      return nil if colour_def == ""
+      return nil if colour_def == "" || colour_def == "default"
       begin
         @palette.get_colour_value parse_colour_id colour_def
       rescue RuntimeError

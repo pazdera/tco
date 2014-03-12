@@ -2,15 +2,45 @@ palette: "extended"
 
 colour_values:
     "@0": "#3b3b3b"
+    "@1": "#cf6a4c"
+    "@2": "#99ad6a"
+    "@3": "#d8ad4c"
+    "@4": "#597bc5"
+    "@5": "#a037b0"
+    "@6": "#71b9f8"
+    "@7": "#adadad"
+
+    "@8": "#555555"
+    "@9": "#ff5555"
+    "@10": "#55ff55"
+    "@11": "#ffff55"
+    "@12": "#5555ff"
+    "@13": "#ff55ff"
+    "@14": "#55ffff"
+    "@15": "#ffffff"
 
 names:
-    red: "@1"
-    blue: "#0000FF"
-    name: "blue"
+    black:  "#000000"
+    white:  "#ffffff"
+    red:    "#CC333F"
+    brown:  "#6A4A3C"
+    blue:   "#4D9EEB"
+    yellow: "#EDC951"
+    purple: "0xa854e8"
 
 styles:
-    name:
+    err:
         fg: "red"
-        bg: "green"
+        bg: "default"
         bright: "true"
+        underline: "false"
+    warn:
+        fg: "yellow"
+        bg: "default"
+        bright: "true"
+        underline: "false"
+    poison:
+        fg: "yellow"
+        bg: "purple"
+        bright: "false"
         underline: "false"

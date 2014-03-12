@@ -98,7 +98,7 @@ begin
   end
 
   if options.has_key? :style
-    style = Tco::get_style name
+    style = Tco::get_style options[:style]
   else
     style = Tco::Style.new
   end

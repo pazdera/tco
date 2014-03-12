@@ -100,11 +100,11 @@ module Tco
             style = {:fg => nil, :bg => nil, :bright => false,
                      :underline => false}
 
-            if styledef.has_key? "fg" && styledef["fg"] != "default"
+            if styledef.has_key? "fg"
               style[:fg] = styledef["fg"]
             end
 
-            if styledef.has_key? "bg" && styledef["bg"] != "default"
+            if styledef.has_key? "bg"
               style[:bg] = styledef["bg"]
             end
 
