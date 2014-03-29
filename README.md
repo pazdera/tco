@@ -50,8 +50,6 @@ end
 
 [![tco showing a simple rainbow](http://linuxwell.com/assets/images/posts/tco-rainbow.png)](http://linuxwell.com/assets/images/posts/tco-rainbow-2.png)
 
-### Drawing Pictures in the Terminal
-
 And if you add a bit of `rmagick` to the equation, you can even render whole
 images in your terminal with no more than 10 lines of code.
 
