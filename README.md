@@ -2,11 +2,11 @@
 
 [![Gem Version](https://badge.fury.io/rb/tco.png)](http://badge.fury.io/rb/tco)
 
-## Introduction
-
 The purpose of the **tco** gem is to make colouring in the terminal as
 convenient and as simple as possible. It provides a library for your Ruby gems
 and also a standalone command line tool that you can use anywhere else.
+
+## Introduction
 
 If you've ever worked with the **extended colour palette** in the terminal, you
 probably know that it's not really easy to find the colour you want. The
@@ -28,11 +28,15 @@ On top of that, it comes with a simple built-in templating engine that you can
 use to decorate only the parts that you want without having to split your
 string into 15 parts. Check out the following examples.
 
-### Examples
+### A few examples
+
+The `tco` terminal utility allows you to do the simple things you might need
+in your bash scripts:
 
 [![Using tco to colour text](http://linuxwell.com/assets/images/posts/tco-terminal.png)](http://linuxwell.com/assets/images/posts/tco-terminal.png)
 
-The following piece of code will draw a rainbow inside your terminal.
+However, using `tco` directly from Ruby gives you much more flexibility. The
+following short piece of code will draw a rainbow inside your terminal:
 
 ```ruby
 require "tco"
@@ -48,8 +52,8 @@ end
 
 ### Drawing Pictures in the Terminal
 
-And if you add `rmagick` gem to load images, you can easily render whole
-images in your terminal.
+And if you add a bit of `rmagick` to the equation, you can even render whole
+images in your terminal with no more than 10 lines of code.
 
 ```ruby
 require "tco"
@@ -63,6 +67,10 @@ end
 ```
 
 [![Tux drawn with tco](http://linuxwell.com/assets/images/posts/tco-tux.png)](http://linuxwell.com/assets/images/posts/tco-tux.png)
+
+These were just the basic things you can do with `tco`. There are many more
+options and features available, many of them are described in the **Usage**
+section just bellow.
 
 ## Usage
 
