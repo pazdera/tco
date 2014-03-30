@@ -77,10 +77,10 @@ library directly from your Ruby scripts. Both use cases are explained bellow.
 
 ### The Ruby library
 
-When it comes to colouring, you have two options here. Either use the default
-library interface or use the `String` extension that comes with the library.
-Both of them offer the same functionality (`fg`, `bg`, `bright`, `underline`).
-See the example of both, below.
+When it comes to colouring, there are two options available. You can either use
+the default library interface, or use the `String` extension that also comes
+with the library. Both of them offer exactly the same functionality (`fg`, `bg`,
+`bright`, `underline`). See the example of both, below:
 
 ```ruby
 require "tco"
@@ -94,18 +94,23 @@ puts "London".fg("#ff0000").bg("#888888").bright
 puts "Underground".underline
 
 # Using predefined style
-puts Tco::style "Underground"
 puts "London".style "alert"
+puts Tco::style "alert", "Underground"
 ```
 
-The library then contains a few more advanced things (see `lib/tco/tco.rb`).
+In the last bit of the example above, I'm referring to a preconfigured style
+definition. You can set them either system-wide in `/etc/tco.conf` or just for
+a single user in the `~/.tco.conf` file. They both are just simple YAML files.
+The precise format of these configuration files is explained at the end of this
+file.
 
-#### Reconfiguring on the fly
+#### Changing the configuration on the fly
 
-You can also obtain and change the configuration of the library on the fly.
-This can be useful for adding aliases for colours and defining your own styles,
-so you don't have to repeat the same settings all over your script. All these
-settings will be applied on top of user configuration.
+A notable feature in regards of configuration is the fact, that you can easily
+change it on-the-fly. This can be useful for adding aliases for colours and
+defining your own styles just for your application, so you don't have to repeat
+the same settings all over your script. All these settings will be applied on
+top of the user and system config files.
 
 ```ruby
 require "tco"
@@ -123,10 +128,14 @@ tco_conf["styles"]["pass"] = {
 Tco::reconfigure tco_conf
 ```
 
+Apart from that, the library then contains a few more advanced things which
+aren't that useful for everyone. Please, have a look at `lib/tco/tco.rb` if
+you're interested.
+
 ### The command-line tool
 
 Using the `tco` command is just as simple as using the Ruby library. It expects
-input either as a positional argument or alternatively at stdin.
+input either as a positional argument or alternatively at the standard input.
 
 Apart from the core functionality, the CLI tool adds support for simple
 templates that let you markup certain parts of your string. All templates
@@ -154,6 +163,7 @@ ways how to specify the colour you would like:
 * **index** - you can also refer to colours through an index to the palette,
   e.g., `@0` or `@176`.
 
+
 ## Configuration
 
 There are two places, where you can store your configuration:
@@ -165,11 +175,12 @@ Both of them are simple YAML text files. Pick the first one if you would like
 to apply your settings system-wide, go with the second option to set things up
 for yourself only (recommended).
 
-And now the important bit, in order to make **tco** work correctly in your
-environment, you will need to configure the **ANSI palette**. These 16 colours
-are configurable in most terminals (you probably have yours customised too).
-**tco** needs to know your setup, so it can make decisions which colour to use.
-You can do so like this:
+And now the important bit, in order to make **tco** work best in your
+environment, it is recommended to configure your **ANSI palette**. These 16
+colours are configurable in most terminals (you probably have yours customised
+too). **tco** needs to know your setup, so it can make decisions which colour
+to use. If you don't configure them, tco will not use the ANSI colours at all
+in order to avoid mistakes. You can do so like this:
 
 ```yaml
 # Don't forget changing the values to match your terminal configuration
