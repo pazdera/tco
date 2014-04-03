@@ -88,6 +88,13 @@ module Tco
   def self.config
     @config
   end
+  
+  def self.configure
+    c = config
+    yield(c)
+    reconfigure(c)
+    c
+  end
 
   def self.reconfigure(config)
     @config = config
