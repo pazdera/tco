@@ -1,6 +1,9 @@
 # tco - terminal colours made simple
 
 [![Gem Version](https://badge.fury.io/rb/tco.png)](http://badge.fury.io/rb/tco)
+[![Build Status][BS img]][Build Status]
+[Build Status]: https://travis-ci.org/chip/tco
+[BS img]: https://travis-ci.org/chip/tco.png
 [![Inline docs](http://inch-pages.github.io/github/pazdera/tco.png)](http://inch-pages.github.io/github/pazdera/tco)
 
 The purpose of the **tco** gem is to make colouring in the terminal as
