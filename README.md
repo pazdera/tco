@@ -1,6 +1,7 @@
 # tco - terminal colours made simple
 
 [![Gem Version](https://badge.fury.io/rb/tco.png)](http://badge.fury.io/rb/tco)
+[![Inline docs](http://inch-pages.github.io/github/pazdera/tco.png)](http://inch-pages.github.io/github/pazdera/tco)
 
 The purpose of the **tco** gem is to make colouring in the terminal as
 convenient and as simple as possible. It provides a library for your Ruby gems
