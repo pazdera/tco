@@ -25,7 +25,7 @@
 require 'optparse'
 require 'tco'
 
-options = {:newline => true}
+options = {:newline => true, :debug => false}
 parser = OptionParser.new do |opts|
   opts.banner = "Usage: tco [options] [TEXT]"
 
@@ -75,6 +75,10 @@ parser = OptionParser.new do |opts|
     options[:raw] = true
   end
 
+  opts.on("-D", "--debug", "Run tco in debug mode") do |raw|
+    options[:debug] = true
+  end
+
   # TODO: This should output HTML (not implemented yet)
   #opts.on("-w", "--web", "Output HTML") do |html|
   #  options[:html] = html
@@ -83,7 +87,6 @@ end
 
 begin
   parser.parse!
-
   config = Tco::config
 
   # Force palette setting
@@ -136,6 +139,10 @@ begin
 
   print "\n" if options[:newline] && !(input =~ /\n$/)
 rescue Exception => e
-  puts e
-  exit
+  if options[:debug]
+    raise e
+  else
+    puts e
+    exit
+  end
 end
