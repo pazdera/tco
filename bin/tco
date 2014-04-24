@@ -120,7 +120,7 @@ begin
   end
 
   if ARGV.length > 0
-    input = ARGV[0].gsub /\\[nt]/, "\\n" => "\n", "\\t" => "\t"
+    input = ARGV[0].gsub(/\\[nt]/, "\\n" => "\n", "\\t" => "\t")
   else
     input = ""
     while input_line = gets

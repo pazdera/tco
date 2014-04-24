@@ -22,6 +22,18 @@
 # THE SOFTWARE.
 
 module Tco
+  class Unknown
+    attr_reader :id
+
+    def initialize(id)
+      @id = id
+    end
+
+    def to_s
+      "@#{@id}"
+    end
+  end
+
   class Colour
     attr_reader :rgb, :lab
 
@@ -243,7 +255,8 @@ module Tco
       xDL = xDL / (kl * xSL)
       xDC = xDC / (kc * xSC)
       xDH = xDH / (kh * xSH)
-      de = Math.sqrt(xDL**2 + xDC**2 + xDH**2 + xRT * xDC * xDH)
+
+      Math.sqrt(xDL**2 + xDC**2 + xDH**2 + xRT * xDC * xDH)
     end
   end
 
@@ -260,22 +273,22 @@ module Tco
         # they were explicitly configured in tco.conf.
         #
         # The colour values in comments are the defaults for xterm.
-        nil, # [0, 0, 0]
-        nil, # [205, 0, 0]
-        nil, # [0, 205, 0]
-        nil, # [205, 205, 0]
-        nil, # [0, 0, 238]
-        nil, # [205, 0, 205]
-        nil, # [0, 205, 205]
-        nil, # [229, 229, 229]
-        nil, # [127, 127, 127]
-        nil, # [255, 0, 0]
-        nil, # [0, 255, 0]
-        nil, # [255, 255, 0]
-        nil, # [92, 92, 255]
-        nil, # [255, 0, 255]
-        nil, # [0, 255, 255]
-        nil, # [255, 255, 255]
+        Unknown.new(0), # [0, 0, 0]
+        Unknown.new(1), # [205, 0, 0]
+        Unknown.new(2), # [0, 205, 0]
+        Unknown.new(3), # [205, 205, 0]
+        Unknown.new(4), # [0, 0, 238]
+        Unknown.new(5), # [205, 0, 205]
+        Unknown.new(6), # [0, 205, 205]
+        Unknown.new(7), # [229, 229, 229]
+        Unknown.new(8), # [127, 127, 127]
+        Unknown.new(9), # [255, 0, 0]
+        Unknown.new(10), # [0, 255, 0]
+        Unknown.new(11), # [255, 255, 0]
+        Unknown.new(12), # [92, 92, 255]
+        Unknown.new(13), # [255, 0, 255]
+        Unknown.new(14), # [0, 255, 255]
+        Unknown.new(15), # [255, 255, 255]
 
         # The colours bellow are the definitions from xterm extended
         # colour palette. They should be the same across terminals.
@@ -529,10 +542,15 @@ module Tco
 
     def get_colour_value(id)
       raise "Id '#{id}' out of range." unless id.between?(0, @palette.length-1)
+      raise "Value of colour '#{id}' is unknown" if @palette[id].is_a? Unknown
       @palette[id].rgb if @palette[id]
     end
 
-    # Returns an index of the closest colour in the palette
+    def is_known?(id)
+      raise "Id '#{id}' out of range." unless id.between?(0, @palette.length-1)
+      !@palette[id].is_a? Unknown
+    end
+
     def match_colour(colour)
       unless colour.is_a? Colour
         msg = "Unsupported argument type '#{colour.class}', must be 'Colour'."
@@ -547,7 +565,7 @@ module Tco
       if @cache.has_key? colour.to_s
         @cache[colour.to_s]
       else
-        distances = colours.map { |c| c ? c - colour : Float::INFINITY }
+        distances = colours.map { |c| c.is_a?(Colour) ? c - colour : Float::INFINITY }
         colour_index = distances.each_with_index.min[1]
 
         # TODO: No cache eviction is currently in place

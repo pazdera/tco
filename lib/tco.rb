@@ -120,11 +120,10 @@ module Tco
         black = Tco::Colour.new([0,0,0])
         white = Tco::Colour.new([255,255,255])
 
-        font_colour = if (colours[c] - black).abs > (colours[c] - white).abs
-                        black
-                      else
-                        white
-                      end
+        font_colour = black
+        if colours[c].is_a?(Colour) && (colours[c] - black).abs < (colours[c] - white).abs
+          font_colour = white
+        end
 
         square_styles.push [c, font_colour, colours[c]]
         c += 1

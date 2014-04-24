@@ -59,8 +59,8 @@ module Tco
     def decorate(string, (fg, bg, bright, underline))
       return string unless STDOUT.isatty || @output_type == :raw
 
-      fg = to_colour fg
-      bg = to_colour bg
+      fg = get_colour_instance fg
+      bg = get_colour_instance bg
 
       output = []
       lines = string.lines.map(&:chomp)
@@ -116,12 +116,20 @@ module Tco
 
     def colour_ansi(string, fg=nil, bg=nil)
       unless fg == nil
-        colour_id = @palette.match_colour(fg)
+        colour_id = if fg.is_a? Unknown
+          fg.id
+        else
+          @palette.match_colour(fg)
+        end
         string = e(colour_id + 30) + string
       end
 
       unless bg == nil
-        colour_id = @palette.match_colour(bg)
+        colour_id = if bg.is_a? Unknown
+          bg.id
+        else
+          @palette.match_colour(bg)
+        end
         string = e(colour_id + 40) + string
       end
 
@@ -134,12 +142,20 @@ module Tco
 
     def colour_extended(string, fg=nil, bg=nil)
       unless fg == nil
-        colour_id = @palette.match_colour(fg)
+        colour_id = if fg.is_a? Unknown
+          fg.id
+        else
+          @palette.match_colour(fg)
+        end
         string = e("38;5;#{colour_id}") + string
       end
 
       unless bg == nil
-        colour_id = @palette.match_colour(bg)
+        colour_id = if bg.is_a? Unknown
+          bg.id
+        else
+          @palette.match_colour(bg)
+        end
         string = e("48;5;#{colour_id}") + string
       end
 
@@ -192,11 +208,17 @@ module Tco
 
     def resolve_colour_def(colour_def)
       return nil if colour_def == "" || colour_def == "default"
+
       begin
-        @palette.get_colour_value parse_colour_id colour_def
+        id = parse_colour_id colour_def
+        if @palette.is_known? id
+          Colour.new @palette.get_colour_value id
+        else
+          Unknown.new id
+        end
       rescue RuntimeError
         begin
-          parse_rgb_value colour_def
+          Colour.new parse_rgb_value colour_def
         rescue RuntimeError
           begin
             colour_def = resolve_colour_name colour_def
@@ -212,16 +234,19 @@ module Tco
       end
     end
 
-    def to_colour(value)
-      rgb = case
-            when value.is_a?(String) then resolve_colour_def value
-            when value.is_a?(Array) then value
-            when value.is_a?(Colour) then value.rgb
-            when value == nil then return nil
-            else raise "Colour value type '#{value.class}' not supported."
-            end
-
-      Colour.new rgb
+    def get_colour_instance(value)
+      case
+      when value.is_a?(String)
+        resolve_colour_def value
+      when value.is_a?(Array)
+        Colour.new value
+      when value.is_a?(Colour) || value.is_a?(Unknown)
+        value
+      when value == nil
+        nil
+      else
+        raise "Colour value type '#{value.class}' not supported."
+      end
     end
   end
 end
