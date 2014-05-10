@@ -1,3 +1,14 @@
+## 0.1.2 (2014-05-10)
+
+Features:
+
+  - added a config option to globally disable colouring
+
+Bugfixes:
+
+  - the 'options' section is now handled properly
+  - a few docs improvements
+
 ## 0.1.1 (2014-04-24)
 
 Features:
