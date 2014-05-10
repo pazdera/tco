@@ -34,7 +34,7 @@ string into 15 parts. Check out the following examples.
 The `tco` terminal utility allows you to do the simple things you might need
 in your bash scripts:
 
-[![Using tco to colour text](http://linuxwell.com/assets/images/posts/tco-terminal.png)](http://linuxwell.com/assets/images/posts/tco-terminal.png)
+[![Using tco to colour text](http://broken.build/assets/images/posts/tco-terminal.png)](http://broken.build/assets/images/posts/tco-terminal.png)
 
 However, using `tco` directly from Ruby gives you much more flexibility. The
 following short piece of code will draw a rainbow inside your terminal:
@@ -49,7 +49,7 @@ rainbow = ["#622e90", "#2d3091", "#00aaea", "#02a552", "#fdea22", "#eb443b", "#f
 end
 ```
 
-[![tco showing a simple rainbow](http://linuxwell.com/assets/images/posts/tco-rainbow.png)](http://linuxwell.com/assets/images/posts/tco-rainbow-2.png)
+[![tco showing a simple rainbow](http://broken.build/assets/images/posts/tco-rainbow.png)](http://broken.build/assets/images/posts/tco-rainbow.png)
 
 And if you add a bit of `rmagick` to the equation, you can even render whole
 images in your terminal with no more than 10 lines of code.
@@ -65,7 +65,7 @@ Magick::Image.read("tux.png")[0].each_pixel do |pixel, col, row|
 end
 ```
 
-[![Tux drawn with tco](http://linuxwell.com/assets/images/posts/tco-tux.png)](http://linuxwell.com/assets/images/posts/tco-tux.png)
+[![Tux drawn with tco](http://broken.build/assets/images/posts/tco-tux.png)](http://broken.build/assets/images/posts/tco-tux.png)
 
 These were just the basic things you can do with `tco`. There are many more
 options and features available, many of them are described in the **Usage**
