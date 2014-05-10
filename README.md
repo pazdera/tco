@@ -119,17 +119,15 @@ top of the user and system config files.
 ```ruby
 require "tco"
 
-tco_conf = Tco::config
-
-tco_conf["names"]["white"] = "#000"
-tco_conf["styles"]["pass"] = {
-  "fg" => "#000",
-  "bg" => "#00ff00",
-  "bright" => false,
-  "underline" => false,
-}
-
-Tco::reconfigure tco_conf
+Tco::configure do |tco_conf|
+  tco_conf.names["white"] = "#000"
+  tco_conf.styles["pass"] = {
+    "fg" => "#000",
+    "bg" => "#00ff00",
+    "bright" => false,
+    "underline" => false,
+  }
+end
 ```
 
 Apart from that, the library then contains a few more advanced things which
@@ -215,7 +213,8 @@ configuration file would look like this:
 ```yaml
 # This is unnecessary (extended palette is enabled by default).
 # However, you can set this to ansi if you use an older terminal.
-palette: "extended"
+options:
+    palette: "extended"
 
 colour_values:
     "@0": "#3b3b3b"
