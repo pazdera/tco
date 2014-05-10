@@ -34,6 +34,7 @@ module Tco
     def initialize(configuration)
       @palette = Palette.new configuration.options["palette"]
       @output_type = configuration.options["output"]
+      @disabled = configuration.options["disabled"]
 
       configuration.colour_values.each do |id, value|
         @palette.set_colour_value(parse_colour_id(id), parse_rgb_value(value))
@@ -57,7 +58,9 @@ module Tco
     # line). This is due to some problems I've been having with some
     # terminal emulators not handling multi-line coloured sequences well.
     def decorate(string, (fg, bg, bright, underline))
-      return string unless STDOUT.isatty || @output_type == :raw
+      if (!STDOUT.isatty) || @output_type == :raw || @disabled
+        return string
+      end
 
       fg = get_colour_instance fg
       bg = get_colour_instance bg

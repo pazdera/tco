@@ -30,7 +30,8 @@ module Tco
     def initialize(locations=[])
       @options = {
         "palette" => "extended",
-        "output"  => "term"
+        "output"  => "term",
+        "disabled" => false
       }
       @colour_values = {}
       @names = {
@@ -67,10 +68,13 @@ module Tco
       if conf_file.has_key? "options"
         if conf_file["options"].is_a? Hash
           conf_file["options"].each do |id, value|
-            @colour_values[id] = value
+            @options[id] = case id
+              when "disabled" then parse_bool value
+              else value
+            end
           end
         else
-          raise "The 'colour_values' config option must be a hash."
+          raise "The 'options' config option must be a hash."
         end
       end
 
