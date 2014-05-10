@@ -88,7 +88,7 @@ module Tco
   def self.config
     @config
   end
-  
+
   def self.configure
     c = config
     yield(c)
