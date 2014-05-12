@@ -1,3 +1,9 @@
+## 0.1.3 (2014-05-12)
+
+Bugfixes:
+
+  - removed runtime dependency on rspec
+
 ## 0.1.2 (2014-05-10)
 
 Features:
