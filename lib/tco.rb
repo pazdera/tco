@@ -106,11 +106,11 @@ module Tco
     colour_index = @colouring.palette.match_colour colour
 
     fg = @colouring.get_best_font_colour colour
-    bg = colour
+    bg = @colouring.palette.colours[colour_index]
 
     puts Tco::colour fg, bg, " "*9
     puts Tco::colour fg, bg, colour_index.to_s.center(9)
-    puts Tco::colour fg, bg, colour.to_s.center(9)
+    puts Tco::colour fg, bg, bg.to_s.center(9)
     puts Tco::colour fg, bg, " "*9
   end
 
