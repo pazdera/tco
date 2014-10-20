@@ -60,6 +60,11 @@ parser = OptionParser.new do |opts|
     options[:display] = true
   end
 
+  desc = "Show the matching colour from the current palette for this spec"
+  opts.on("-m COLOUR", "--match COLOUR", desc) do |colour|
+    options[:match] = colour
+  end
+
   opts.on("-p PALETTE", "--force-palette PALETTE",
           "Force either ansi or extended palette") do |palette|
     options[:palette] = palette
@@ -97,6 +102,11 @@ begin
 
   if options.has_key? :display
     Tco::display_palette
+    Kernel.exit! 0
+  end
+
+  if options.has_key? :match
+    Tco::show_matching_colour options[:match]
     Kernel.exit! 0
   end
 

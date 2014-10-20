@@ -108,6 +108,33 @@ module Tco
       @output_type = output_type
     end
 
+    def get_best_font_colour(background)
+        black = Tco::Colour.new([0,0,0])
+        white = Tco::Colour.new([255,255,255])
+
+        if background.is_a?(Colour) &&
+           (background - black).abs < (background - white).abs
+          return white
+        end
+
+        black
+    end
+
+    def get_colour_instance(value)
+      case
+      when value.is_a?(String)
+        resolve_colour_def value
+      when value.is_a?(Array)
+        Colour.new value
+      when value.is_a?(Colour) || value.is_a?(Unknown)
+        value
+      when value == nil
+        nil
+      else
+        raise "Colour value type '#{value.class}' not supported."
+      end
+    end
+
     private
     def e(seq)
       if @output_type == :raw
@@ -234,21 +261,6 @@ module Tco
             raise "Invalid colour definition '#{colour_def}'."
           end
         end
-      end
-    end
-
-    def get_colour_instance(value)
-      case
-      when value.is_a?(String)
-        resolve_colour_def value
-      when value.is_a?(Array)
-        Colour.new value
-      when value.is_a?(Colour) || value.is_a?(Unknown)
-        value
-      when value == nil
-        nil
-      else
-        raise "Colour value type '#{value.class}' not supported."
       end
     end
   end

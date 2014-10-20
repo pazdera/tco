@@ -101,6 +101,19 @@ module Tco
     @colouring = Colouring.new config
   end
 
+  def self.show_matching_colour(colour_spec)
+    colour = @colouring.get_colour_instance colour_spec
+    colour_index = @colouring.palette.match_colour colour
+
+    fg = @colouring.get_best_font_colour colour
+    bg = colour
+
+    puts Tco::colour fg, bg, " "*9
+    puts Tco::colour fg, bg, colour_index.to_s.center(9)
+    puts Tco::colour fg, bg, colour.to_s.center(9)
+    puts Tco::colour fg, bg, " "*9
+  end
+
   def self.display_palette
     # TODO: Might be worth sorting, so the pallete is easier to navigate
     colours = @colouring.palette.colours
@@ -117,15 +130,7 @@ module Tco
       # Prepare the squares for the line
       square_styles = []
       squares.times do
-        black = Tco::Colour.new([0,0,0])
-        white = Tco::Colour.new([255,255,255])
-
-        font_colour = black
-        if colours[c].is_a?(Colour) && (colours[c] - black).abs < (colours[c] - white).abs
-          font_colour = white
-        end
-
-        square_styles.push [c, font_colour, colours[c]]
+        square_styles.push [c, @colouring.get_best_font_colour(colours[c]), colours[c]]
         c += 1
       end
 
