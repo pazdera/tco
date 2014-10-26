@@ -181,8 +181,8 @@ module Tco
             params[:base_style] = df
             params[:fg] = nil
             params[:bg] = nil
-            params[:bright] = false
-            params[:underline] = false
+            params[:bright] = nil
+            params[:underline] = nil
           end
         when :end
           if stack.length > 0

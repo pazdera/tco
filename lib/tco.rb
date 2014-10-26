@@ -71,10 +71,10 @@ module Tco
                 Style.new
               end
 
-      style.fg = seg.params[:fg]
-      style.bg = seg.params[:bg]
-      style.bright = seg.params[:bright]
-      style.underline = seg.params[:underline]
+      style.fg = seg.params[:fg] if seg.params[:fg]
+      style.bg = seg.params[:bg] if seg.params[:bg]
+      style.bright = seg.params[:bright] if seg.params[:bright]
+      style.underline = seg.params[:underline] if seg.params[:underline]
 
       output << decorate(seg.to_s, style)
     end
