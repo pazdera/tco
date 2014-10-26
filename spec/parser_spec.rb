@@ -97,7 +97,7 @@ describe Tco do
       string = "The City of {{::u London}}, UK"
       expected = [
         Tco::Segment.new("The City of ", get_params),
-        Tco::Segment.new("London", get_params(nil, nil, nil, false, true)),
+        Tco::Segment.new("London", get_params(nil, nil, nil, nil, true)),
         Tco::Segment.new(", UK", get_params)
       ]
 

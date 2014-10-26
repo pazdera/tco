@@ -59,8 +59,8 @@ module Tco
         :base_style => nil,
         :fg => nil,
         :bg => nil,
-        :bright => false,
-        :underline => false
+        :bright => nil,
+        :underline => nil
       }
 
       if default_style
