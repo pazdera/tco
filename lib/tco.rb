@@ -101,6 +101,11 @@ module Tco
     @colouring = Colouring.new config
   end
 
+  def self.match_colour(colour_spec)
+    colour = @colouring.get_colour_instance colour_spec
+    @colouring.palette.match_colour colour
+  end
+
   def self.show_matching_colour(colour_spec)
     colour = @colouring.get_colour_instance colour_spec
     colour_index = @colouring.palette.match_colour colour
