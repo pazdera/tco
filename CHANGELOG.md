@@ -1,3 +1,9 @@
+## 0.1.7 (2015-07-04)
+
+Improvements:
+
+  - the `match_colour` method is now accessible via the public interface
+
 ## 0.1.3 (2014-05-12)
 
 Bugfixes:
