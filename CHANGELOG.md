@@ -4,6 +4,18 @@ Improvements:
 
   - the `match_colour` method is now accessible via the public interface
 
+## 0.1.6 (2014-10-26)
+
+Bugfixes:
+
+  - default style not handled properly in the parser
+
+## 0.1.4 (2014-10-20)
+
+Features:
+
+  - added the -m option
+
 ## 0.1.3 (2014-05-12)
 
 Bugfixes:
