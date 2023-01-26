@@ -57,7 +57,7 @@ module Tco
 
       locations.each do |conf_file|
         conf_file = File.expand_path conf_file
-        next unless File.exists? conf_file
+        next unless File.exist? conf_file
         load conf_file
       end
     end
